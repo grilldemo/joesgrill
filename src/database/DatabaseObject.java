@@ -30,6 +30,16 @@ public class DatabaseObject {
 		
 	}
 	
-	
+	public ResultSet getMenu() {
+		ResultSet menu = null;
+		String sqlStatement ="SELECT * FROM joes_grill.menu;";
+		try {
+			menu = statement.executeQuery(sqlStatement);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return menu;
+	}
 	
 }
