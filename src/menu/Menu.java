@@ -18,6 +18,7 @@ public class Menu {
 				resMenu.add(new MenuItem( rs.getInt("item_id"),rs.getString("item_name"), 
 						rs.getString("item_description"),rs.getDouble("item_price"),rs.getString("image"),rs.getInt("category_id")));
 			}
+			dbo.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
