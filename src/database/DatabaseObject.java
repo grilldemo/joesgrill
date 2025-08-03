@@ -47,7 +47,35 @@ public class DatabaseObject {
 		}
 		return order;
 	}
+	public void updatemenu(String name,String descipion,double price,int selected) {
+		//String update = "UPDATE `order` SET finished= true where order_id = "+orderIdnum+";";
+		//UPDATE `order` SET finished= true where order_id = 1;
+		String updatemenu ="UPDATE menu SET "
+				+ "item_name = '" + name +
+				"',item_description = '"+descipion+
+				"',item_price = "+price+
+				" WHERE item_id = "+selected+";";
+		try {
+			statement.executeUpdate(updatemenu);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
+	public void createitem(String name,String descipion,double price) {
+		String insermenu = "INSERT INTO `menu` (`item_name`,`item_description`,`item_price`,`image`,category_id)"
+				+ " VALUES ('"+ name +"','"+ descipion +"',"+price+",null,1);";
+		try {
+			statement.executeUpdate(insermenu);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	//('water','tap water in a glass',0.00,NULL,1);
+	}
 	public void updateOrder(int orderIdnum) {
 		String update = "UPDATE `order` SET finished= true where order_id = "+orderIdnum+";";
 		try {
@@ -57,6 +85,20 @@ public class DatabaseObject {
 			e.printStackTrace();
 		}
 	}
+	public ResultSet getaccount() {
+		ResultSet accounts = null;
+		String accountsqlStatement ="SELECT * FROM joes_grill.admin_board;";
+		try {
+			accounts=statement.executeQuery(accountsqlStatement);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return accounts;
+	}
+	
+	
+	
 	public ResultSet getMenu() {
 		ResultSet menu = null;
 		String sqlStatement ="SELECT * FROM joes_grill.menu;";

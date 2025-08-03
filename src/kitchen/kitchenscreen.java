@@ -31,27 +31,28 @@ public class kitchenscreen extends Application {
 		// TODO Auto-generated method stub
 		launch(args);
 	}
-	VBox kitchenmain= new VBox(10);
-	VBox kitchentop= new VBox(10);
-	VBox kitchenbottom= new VBox(10);//add grid to this
+	//vboxs
+	VBox kitchenmain= new VBox(10);//main vbox
+	VBox kitchenBottom= new VBox(10);//vbox being added to scrollpane
+	//buttons
 	Button refresh = new Button("refresh");
-	ScrollPane orderPane= new ScrollPane(kitchenbottom);
-	//ArrayList<GridPane> ordersgrid= new ArrayList<>();
-	//ArrayList<Button> markgrid= new ArrayList<>();
-	ArrayList<Text> ordertextlist= new ArrayList<>();
-	//key grids
-	ArrayList<GridPane> ordersgrid= new ArrayList<>();//arraylist grid
-	ArrayList<Text> orderid= new ArrayList<>();
-	ArrayList<Text> itemName= new ArrayList<>();
-	ArrayList<Text> itemquatity= new ArrayList<>();
+	//scrollpanes
+	ScrollPane orderPane= new ScrollPane(kitchenBottom);//scrollpane containing vbox
+	//arraylist
+	ArrayList<Label> ordertextList= new ArrayList<>();
+	ArrayList<GridPane> ordersGrid= new ArrayList<>();//arraylist of grids
+	ArrayList<Label> orderId= new ArrayList<>();
+	ArrayList<Label> itemName= new ArrayList<>();
+	ArrayList<Label> itemQuatity= new ArrayList<>();
+	ArrayList<Label> quanity= new ArrayList<>();
 	ArrayList<Button> itemFinish= new ArrayList<>();
-	int num=0;
-	int buttonnum=0;
+	//ints
+	int num=0;//counter
+	int buttonnum=0;//counter for orderid and itemfinish
 
 	
 	public void start (Stage stager)throws Exception{
-		repaintscreen();
-		//addtokitchenupper();
+		repaintScreen();
 		addtokitchen();
 		showScreen2();
 	}
@@ -67,23 +68,23 @@ public class kitchenscreen extends Application {
 		kitchenStage.setScene(kitchenscene);
 		kitchenStage.show();
 	}
-	private void setTimeout(Runnable action) {
-    	PauseTransition pause = new PauseTransition(Duration.millis(10000));
+	private void setTimeout(Runnable action) {//timer that refreses every 20 seconds
+    	PauseTransition pause = new PauseTransition(Duration.millis(20000));
         pause.setOnFinished(event -> Platform.runLater(action));
         pause.play();
     }
 
 	
 	
-	private void repaintscreen() {
+	private void repaintScreen() {//adds orders to sceen
 		DatabaseObject dbok = new DatabaseObject();
 		ResultSet krs = dbok.getOrders();
-		orderid.clear();
+		orderId.clear();
 		itemName.clear();
-		itemquatity.clear();
+		itemQuatity.clear();
 		itemFinish.clear();
-		ordersgrid.clear();
-		kitchenbottom.getChildren().clear();
+		ordersGrid.clear();
+		kitchenBottom.getChildren().clear();
 		num=0;
 		buttonnum=0;
 		int oldId=-1;
@@ -91,27 +92,32 @@ public class kitchenscreen extends Application {
 			while(krs.next()) {
 				int curId= krs.getInt("order_id");
 				String oid =String.valueOf(krs.getInt("order_id"));//order id
-				String name = krs.getString("item_name");
-				String quan =String.valueOf(krs.getInt("quantity"));
-				//buttonList.add(new Button(menuObject.getResMenu().get(i).getItemName()));
-				//orderid.add(new Text(oid));
-				itemName.add(new Text(name));
-				itemquatity.add(new Text(quan));
-				//
+				String name = krs.getString("item_name");//items name
+				String quan =String.valueOf(krs.getInt("quantity"));//items quanity
+				
+				itemName.add(new Label(name));//items name
+				itemQuatity.add(new Label(quan));//item quanity
+				quanity.add(new Label("quanity: "));//label that directly tells whats next to it
+			
 				//make grid and add items to it and
 				//gridlist.get(k).add(textnamelist.get(k), 1, 1);
 				//grid.add(buttonList.get(i),column,row);
-				ordersgrid.add(new GridPane());//new grid
-				ordersgrid.get(num).add(itemName.get(num), 2, 1);//itemname
-				ordersgrid.get(num).add(itemquatity.get(num), 3, 1);//itemquatity
-
+				ordersGrid.add(new GridPane());//new grid
+				ordersGrid.get(num).add(itemName.get(num), 2, 1);//itemname
+				ordersGrid.get(num).add(quanity.get(num), 3, 1);
+				ordersGrid.get(num).add(itemQuatity.get(num), 4, 1);//itemquatity
+				//menuPane.setPadding(new Insets(top right bottum left));
+				//.setFont(new Font("Ariel",16));
+				itemName.get(num).setPadding(new Insets(5, 5, 5, 5));
 				if(curId!=oldId) {
 					//create texts and buttons here and add to grid and add grid to vbox
 					oid =String.valueOf(krs.getInt("order_id"));//order id
-					orderid.add(new Text(oid));
-					ordersgrid.get(num).add(orderid.get(buttonnum), 1, 1);//orderid
+					orderId.add(new Label(oid));
+					ordersGrid.get(num).add(orderId.get(buttonnum), 1, 1);//orderid
 					itemFinish.add(new Button("finished"));
-					ordersgrid.get(num).add(itemFinish.get(buttonnum), 4, 1);
+					ordersGrid.get(num).add(itemFinish.get(buttonnum), 5, 1);
+					
+					
 					final int id=curId;
 					itemFinish.get(buttonnum).setOnAction(event ->{
 						finishOrder(id);
@@ -123,15 +129,14 @@ public class kitchenscreen extends Application {
 				
 				
 				}
-				//add gird to vbox kitchenbottom
-				//cartcheckoutDisplay.getChildren().addAll(cartgridlower);
+				
 				oldId=curId;
-				kitchenbottom.getChildren().add(ordersgrid.get(num));
+				kitchenBottom.getChildren().add(ordersGrid.get(num));
 				num++;
 				
 			}
 			dbok.close();
-			setTimeout(()->repaintscreen());
+			setTimeout(()->repaintScreen());
 		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -140,29 +145,20 @@ public class kitchenscreen extends Application {
 	
 	
 	}
-	private void finishOrder(int num){
+	private void finishOrder(int num){//update order and repaints screen
 		DatabaseObject dbok = new DatabaseObject();
 		dbok.updateOrder(num);
 		dbok.close();
-		repaintscreen();
+		repaintScreen();
 	}
 	
 	
-	private void addtokitchen() {
+	private void addtokitchen() {//adds scrollpane to main vbox
 		kitchenmain.getChildren().addAll(orderPane);
 	}
-	private void addtokitchenupper() {//sorta finished
-		kitchentop.getChildren().add(refresh);
-		
-		refresh.setOnAction(event->{
-			
-		});
-		
-	}
 	
-	//get data
-	//loop tgrough order
-	//
+	
+	
 	
 	
 	

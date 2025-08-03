@@ -21,6 +21,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import menu.Menu;
 public class kiosk_menu extends Application  {
@@ -35,105 +37,128 @@ public class kiosk_menu extends Application  {
 	
 
 	Menu menuObject;
-	VBox mainContainer= new VBox(10);
-	VBox cartContainer = new VBox(10);
+	VBox mainContainer= new VBox(10);//main menu vbox
+	VBox cartContainer = new VBox(10);//cart vbox
 	
 	//arrraylist
 	ArrayList<Button> buttonList= new ArrayList<>();
-	ArrayList<Button> removebuttonList= new ArrayList<>();
-	ArrayList<GridPane> gridlist= new ArrayList<>();
-	ArrayList<Text> textnamelist= new ArrayList<>();
-	ArrayList<Text> textpricelist= new ArrayList<>();
-	ArrayList<TextField> textfieldlist= new ArrayList<>();
+	ArrayList<Button> removeButtonList= new ArrayList<>();
+	ArrayList<GridPane> gridList= new ArrayList<>();
+	ArrayList<Label> textNameList= new ArrayList<>();
+	ArrayList<Label> textPriceList= new ArrayList<>();
+	ArrayList<Label> quanityList= new ArrayList<>();
+	ArrayList<TextField> textFieldList= new ArrayList<>();
 	ArrayList<Integer> itemSelected= new ArrayList<>();
 	ArrayList<Integer> itemQuantity= new ArrayList<>();
-	ArrayList<String> orderlist= new ArrayList<>();
-	ArrayList<String> orderpricelist= new ArrayList<>();
+	ArrayList<String> orderList= new ArrayList<>();
+	ArrayList<String> orderPriceList= new ArrayList<>();
 	
 	//grids
 	GridPane grid= new GridPane();//grid for items
-	GridPane displaygrid= new GridPane();
-	GridPane cartgrid= new GridPane();
-	GridPane cartgridlower= new GridPane();
-	GridPane checkoutgrid= new GridPane();
+	GridPane displayGrid= new GridPane();//grid for itemdisplay
+	GridPane cartGrid= new GridPane();//grid for cart
+	GridPane cartGridLower= new GridPane();//grid for cart checkout
+	GridPane checkoutGrid= new GridPane();//gid for menu checkout
 	
 	
 	Stage cartStage = new Stage();
+	
 
 	//objects
-	int itemSelect;
-	int cartnum=0;
+	int itemSelect=1;//set to one because if it was 0 or null it might crash the program when add to cart is pressed without selecting an item first  
+	int cartNum=0;//count for items in the cart
 	//String order="";
-	private Text itemname,itemdesciption,itemprice,totalprice,totalpricecount;
-	ImageView im = new ImageView(); 
-	Button addcart = new Button("add to cart");	
-	Button checkout = new Button("checkout");
-	Button menubutton = new Button("menu");
-	Button tocart = new Button("cart");
-	double orderCost=0.00;
+	private Label itemName,itemDesciption,itemPrice;
+	private Label totalPrice= new Label("totalprice: ");
+	private Label totalPriceCount = new Label(" 0.00");
+	private Label totalPrice2= new Label("totalprice: ");//totalPrice duplacate
+	private Label totalPriceCount2 = new Label(" 0.00");//totalPriceCount duplacate
 	
-	VBox cartinnervbox = new VBox();
-	Scene cartscene =new Scene(cartContainer,400,600);
+	ImageView im = new ImageView(); 
+	Button addCart = new Button("add to cart");	
+	Button checkout = new Button("checkout");
+	Button checkout2 = new Button("checkout");
+	Button menuButton = new Button("menu");
+	Button toCart = new Button("cart");
+	double orderCost=0.00;//default order cost
+	
+	VBox cartInnerVbox = new VBox();//
+	Scene cartScene =new Scene(cartContainer,400,600);
 	ScrollPane menuPane= new ScrollPane(grid);//scrollpane with grid inside
-	ScrollPane cartPane= new ScrollPane(cartinnervbox);
+	ScrollPane cartPane= new ScrollPane(cartInnerVbox);//scrollpane for cart
 	VBox itemDisplay = new VBox();//pane for item display
 	VBox checkoutDisplay = new VBox();
-	VBox cartcheckoutDisplay = new VBox();
+	VBox cartCheckoutDisplay = new VBox();
 	//////////////////////////////////////////////////////kiosk menu methods
 	public void start (Stage stager)throws Exception{
 		createMenu();
-		//menuObject=new Menu();
 		createButtons();  
-		//menuPane.setPadding(new Insets(10,0,0,50));
-		addtoitemdisplay();
-		addtocheckout();
+		addtoItemDisplay();
+		addToCheckout();
 		addToMain();
 		showScreen();
-		addtocartscreen();	
+		addToCartScreen();	
 	}
 	
 	private void showScreen() {
-		Scene newscene =new Scene(mainContainer,400,600);
+		Scene newScene =new Scene(mainContainer,400,600);
 		Stage newStage = new Stage();
 		
 		
 		newStage.setResizable(false);
 		
 		
-		newStage.setScene(newscene);
+		newStage.setScene(newScene);
 		newStage.show();
 	}
-	private void addToMain() {
+	private void addToMain() {//adds the containers to main
 		// TODO Auto-generated method stub
 		mainContainer.getChildren().addAll(menuPane,itemDisplay,checkoutDisplay);
 	}
 
-	private void addtoitemdisplay() {//adds item info to display
-		itemname =new Text("");
-		itemprice =new Text("");
-		itemdesciption =new Text("");
-
+	private void addtoItemDisplay() {//adds item info to display
+		itemName =new Label("");
+		itemPrice =new Label("");
+		itemDesciption =new Label("");
+		//menuPane.setPadding(new Insets(top right bottum left));
+		//.setFont(new Font("Ariel",16));
+		itemName.setPadding(new Insets(0, 25, 5, 20));
+		itemPrice.setPadding(new Insets(5, 25, 0, 20));
+		itemDesciption.setPadding(new Insets(0, 0, 5, 0));
+		addCart.setPadding(new Insets(5, 10, 0, 10));
+		itemName.setFont(new Font("Ariel",14));
+		itemPrice.setFont(new Font("Ariel",18));
+		itemDesciption.setFont(new Font("Ariel",12));
+		addCart.setFont(new Font("Ariel",16));
+		addCart.setStyle("-fx-background-color: yellow;");
+		//set font size and cholor and vbox color
 		//displaygrid.add(im, 1, 1);
-		displaygrid.add(itemname, 1, 2);
-		displaygrid.add(itemprice, 1, 3);
-		displaygrid.add(itemdesciption, 2, 2);
-		displaygrid.add(addcart, 2, 3);
+		displayGrid.add(itemName, 1, 2);
+		displayGrid.add(itemPrice, 1, 3);
+		displayGrid.add(itemDesciption, 2, 2);
+		displayGrid.add(addCart, 2, 3);
+		itemDisplay.setStyle("-fx-background-color: orange;");
 		
-		addcart.setOnAction(event ->{//adds items to cart
+		
+		
+		
+		
+		
+		addCart.setOnAction(event ->{//adds items to cart
 		
 			int index=itemSelected.indexOf(itemSelect);
 			if(index==-1) {
 				itemSelected.add(itemSelect);
-				System.out.println("hjfyjhj");
 				itemQuantity.add(1);
 			}
 			else {
 				int newquanity=itemQuantity.get(index)+1;
 				itemQuantity.set(index,newquanity );
 			}
-			cartnum++;
+			cartNum++;
+			reCount();
 		});
-		itemDisplay.getChildren().addAll(displaygrid);
+		itemDisplay.getChildren().addAll(displayGrid);
 	}
 
 	private void createButtons() {//creates menu buttons
@@ -146,11 +171,18 @@ public class kiosk_menu extends Application  {
 			column = (i%2==0)?0:1;
 			grid.add(buttonList.get(i),column,row);
 			final int menunum = i;
+			//menuPane.setPadding(new Insets(top right bottum left));
+			//.setFont(new Font("Ariel",16));
+			//.setStyle("-fx-background-color: yellow;");
+			buttonList.get(i).setPadding(new Insets(5, 20, 5, 20));
+			buttonList.get(i).setFont(new Font("Ariel",16));
+			buttonList.get(i).setStyle("-fx-background-color: yellow;");
+			grid.setPadding(new Insets(10, 20, 10, 40));
 			
 			buttonList.get(i).setOnAction(event ->{
-				itemname.setText((menuObject.getResMenu().get(menunum).getItemName()));
-				itemprice.setText(String.valueOf(menuObject.getResMenu().get(menunum).getPrice()));
-				itemdesciption.setText((menuObject.getResMenu().get(menunum).getDescription()));
+				itemName.setText((menuObject.getResMenu().get(menunum).getItemName()));
+				itemPrice.setText(String.valueOf(menuObject.getResMenu().get(menunum).getPrice()));
+				itemDesciption.setText((menuObject.getResMenu().get(menunum).getDescription()));
 				itemSelect = menunum;
 			});
 			if(i%2==1) {
@@ -158,7 +190,7 @@ public class kiosk_menu extends Application  {
 			}
 		}
 	}
-	private void createMenu() {
+	private void createMenu() {//creates menuobject
 		// TODO Auto-generated method stub
 		menuObject=new Menu();
 
@@ -167,9 +199,9 @@ public class kiosk_menu extends Application  {
 	
 	//////////////////////////////////////////////cart screen
 	
-	private void removeaction(int cartnum) {
+	private void removeAction(int cartnum) {//removes item from cart
 		
-	cartinnervbox.getChildren().remove(cartnum);
+	cartInnerVbox.getChildren().remove(cartnum);
 		int quanity=itemQuantity.get(cartnum);
 		if(quanity>1) {
 			quanity--;
@@ -180,129 +212,189 @@ public class kiosk_menu extends Application  {
 			itemSelected.remove(cartnum);
 		}
 	}
-	private void buildCartscreen() {
+	private void buildCartScreen() {//makes cart screen
 		
 		for(int k =0;k<itemSelected.size();k++) {
 			
 			
-				removebuttonList.add(new Button("remove"));
-				gridlist.add(new GridPane());
+				removeButtonList.add(new Button("remove"));
+				gridList.add(new GridPane());
 				final int item=k;
-				//final int displayRow=j;
 				
 				
+				textNameList.add(new Label(menuObject.getResMenu().get(itemSelected.get(k)).getItemName()));
+				textPriceList.add(new Label(String.valueOf(menuObject.getResMenu().get(itemSelected.get(k)).getPrice())));
+				quanityList.add(new Label("quanity:"));
+				textFieldList.add(new TextField(String.valueOf(itemQuantity.get(k))));
+				//menuPane.setPadding(new Insets(top right bottum left));
+				//.setFont(new Font("Ariel",16));
+				//.setStyle("-fx-background-color: yellow;");
+				textNameList.get(k).setPadding(new Insets(10, 5, 10, 5));
+				textPriceList.get(k).setPadding(new Insets(10, 5, 5, 5));
+				quanityList.get(k).setPadding(new Insets(10, 5, 5, 5));
+				textFieldList.get(k).setPadding(new Insets(10, 5, 5, 5));
+				removeButtonList.get(k).setPadding(new Insets(10, 5, 5, 5));
 				
-				textnamelist.add(new Text(menuObject.getResMenu().get(itemSelected.get(k)).getItemName()));
-				textpricelist.add(new Text(String.valueOf(menuObject.getResMenu().get(itemSelected.get(k)).getPrice())));
-				textfieldlist.add(new TextField(String.valueOf(itemQuantity.get(k))));
-				gridlist.get(k).add(textnamelist.get(k), 1, 1);
-				gridlist.get(k).add(textpricelist.get(k), 2, 1);
-				gridlist.get(k).add(textfieldlist.get(k), 3, 1);
-				gridlist.get(k).add(removebuttonList.get(k), 4, 1);
-				cartinnervbox.getChildren().add(gridlist.get(k));
+				textNameList.get(k).setFont(new Font("Ariel",14));
+				textPriceList.get(k).setFont(new Font("Ariel",14));
+				quanityList.get(k).setFont(new Font("Ariel",14));
+				textFieldList.get(k).setFont(new Font("Ariel",12));
+				removeButtonList.get(k).setFont(new Font("Ariel",12));
+				removeButtonList.get(k).setStyle("-fx-background-color: yellow;");
+
+				gridList.get(k).add(textNameList.get(k), 1, 1);
+				gridList.get(k).add(textPriceList.get(k), 2, 1);
+				gridList.get(k).add(quanityList.get(k), 3, 1);
+				gridList.get(k).add(textFieldList.get(k), 4, 1);
+				gridList.get(k).add(removeButtonList.get(k), 5, 1);
+				cartInnerVbox.getChildren().add(gridList.get(k));
 				
-				textfieldlist.get(k).textProperty().addListener((obersavable,old,newvalue) ->{
+				textFieldList.get(k).textProperty().addListener((obersavable,old,newvalue) ->{
 					Integer value= Integer.parseInt(newvalue);
-					System.out.println("new value equals " + value);
-					itemQuantity.set(item, value);
-					//recount
+					if(value==0) {
+						itemQuantity.set(item, value);
+						removeAction(item);
+						reCount();
+					}
+					else {
+						itemQuantity.set(item, value);
+						reCount();	
+					}
+					
 				});
-				removebuttonList.get(k).setOnAction(event ->{
-					//cartinnervbox.getChildren().remove(ind);
-					removeaction(item);
+				removeButtonList.get(k).setOnAction(event ->{
+					removeAction(item);
+					reCount();
 				});	
 			}
 	}
 	
-	private void cartScreen() {
+	private void cartScreen() {//shows cart screen
 		cartStage.setResizable(false);	
-		cartStage.setScene(cartscene);
+		cartStage.setScene(cartScene);
 		cartStage.show();
 	}
-	private void addtocartscreen() {
+	private void addToCartScreen() {//adds items to cart screen
 		
-		cartgridlower.add(menubutton, 1, 0);
-		cartgridlower.add(totalprice, 2, 1);
-		cartgridlower.add(totalpricecount, 3, 1);
-		cartgridlower.add(checkout, 4, 1);
-		menubutton.setOnAction(event ->{
-			textnamelist.clear();
-			textpricelist.clear();
-			textfieldlist.clear();
-			gridlist.clear();
+		cartGridLower.add(menuButton, 1, 0);
+		cartGridLower.add(totalPrice, 1, 2);
+		cartGridLower.add(totalPriceCount, 2, 2);
+		cartGridLower.add(checkout, 3, 2);
+		
+		//menuPane.setPadding(new Insets(top right bottum left));
+		//.setFont(new Font("Ariel",16));
+		//.setStyle("-fx-background-color: yellow;");
+		menuButton.setPadding(new Insets(0, 20, 5, 20));
+		totalPrice.setPadding(new Insets(5, 10, 0, 20));
+		totalPriceCount.setPadding(new Insets(5, 5, 0, 5));
+		checkout.setPadding(new Insets(5, 5, 0, 5));
+		menuButton.setFont(new Font("Ariel",16));
+		totalPrice.setFont(new Font("Ariel",16));
+		totalPriceCount.setFont(new Font("Ariel",16));
+		checkout.setFont(new Font("Ariel",16));
+		menuButton.setStyle("-fx-background-color: yellow;");
+		checkout.setStyle("-fx-background-color: yellow;");
+		cartCheckoutDisplay.setStyle("-fx-background-color: orange;");
+		
+		menuButton.setOnAction(event ->{
+			textNameList.clear();
+			textPriceList.clear();
+			textFieldList.clear();
+			gridList.clear();
 			
-			cartinnervbox.getChildren().clear();
+			cartInnerVbox.getChildren().clear();
 			cartStage.close();
 			
 		
 		});
 		checkout.setOnAction(event ->{
-			recount();
+			reCount();
 			sendOrder();
-			closecart();
+			closeCart();
 		});
-		cartcheckoutDisplay.getChildren().addAll(cartgridlower);
-		cartContainer.getChildren().addAll(cartPane,cartcheckoutDisplay);
+		cartCheckoutDisplay.getChildren().addAll(cartGridLower);
+		cartContainer.getChildren().addAll(cartPane,cartCheckoutDisplay);
 		
 	};
 	
 	
 	
-	private void sendOrder() {
+	private void sendOrder() {//sends order to mysql
 		// TODO Auto-generated method stub
 		DatabaseObject dbo2 = new DatabaseObject();
-		//createOrder(DatabaseObject dbo2)
-		//Scanner input = new Scanner(System.in);
-		//String gh= input.nextLine();
-		
 		
 		dbo2.createOrder(menuObject, itemSelected, itemQuantity, orderCost);
 		dbo2.close();
 	}
 
-	private void recount() {
+	private void reCount() {//counts order cost
 		orderCost=0.00;
-		
+		String cost;
 		for(int i=0; i<itemSelected.size();i++) {
 			
 			orderCost+=(menuObject.getResMenu().get(itemSelected.get(i)).getPrice())*(itemQuantity.get(i));
 		}
 		
+		cost= String.format("%.2f", orderCost);
+		
+		
+		
+		totalPriceCount.setText(cost);
+		totalPriceCount2.setText(cost);
 	}
 	
-	private void closecart(){
+	private void closeCart(){//closes the cart
 		
-		textnamelist.clear();
-		textpricelist.clear();
-		textfieldlist.clear();
-		gridlist.clear();
+		textNameList.clear();
+		textPriceList.clear();
+		textFieldList.clear();
+		gridList.clear();
 		
-		cartinnervbox.getChildren().clear();
+		cartInnerVbox.getChildren().clear();
 		cartStage.close();
 		itemSelected.clear();
 		itemQuantity.clear();
 		
 	}
 	
-	private void addtocheckout() {
+	private void addToCheckout() {
+		//.setFont(new Font("Ariel",24));
+		//totalprice =new Text("total price: ");
+		//totalpricecount =new Text("total count");
+		//menuPane.setPadding(new Insets(10,0,0,50));
+		//menuPane.setPadding(new Insets(top right bottum left));
+		toCart.setPadding(new Insets(5,10,5,10));
+		totalPrice2.setPadding(new Insets(5,0,5,10));
+		totalPriceCount2.setPadding(new Insets(5,10,5,0));
+		checkout2.setPadding(new Insets(5,10,5,10));
+		toCart.setFont(new Font("Ariel",16));
+		totalPrice2.setFont(new Font("Ariel",16));
+		totalPriceCount2.setFont(new Font("Ariel",16));
+		checkout2.setFont(new Font("Ariel",16));
+		//.setStyle("-fx-background-color: orange;");
+		toCart.setStyle("-fx-background-color: yellow;");
+		checkout2.setStyle("-fx-background-color: yellow;");
+		checkoutDisplay.setStyle("-fx-background-color: red;");
+		checkoutGrid.add(toCart, 1, 1);
+		checkoutGrid.add(totalPrice2, 2,1);//create duplacate vsrisbles
+		checkoutGrid.add(totalPriceCount2, 3, 1);
+		//checkoutGrid.add(checkout2, 4, 1);
 		
-		totalprice =new Text("total price: ");
-		totalpricecount =new Text("total count");
-		checkoutgrid.add(tocart, 1, 1);
-		checkoutgrid.add(totalprice, 2,1);
-		checkoutgrid.add(totalpricecount, 3, 1);
-		checkoutgrid.add(checkout, 4, 1);
+		checkout2.setOnAction(event->{//unused it doesnt clear ordercost
+			reCount();
+			sendOrder();
+			closeCart();
+		});
 		
-		tocart.setOnAction(event->{
-			buildCartscreen();
+		toCart.setOnAction(event->{
+			buildCartScreen();
 			cartScreen();
 		});
-		checkoutDisplay.getChildren().addAll(checkoutgrid);
+		checkoutDisplay.getChildren().addAll(checkoutGrid);
+		checkoutDisplay.setPadding(new Insets(10,0,0,20));
 	}
 	
-	private void cleararrays() {
-		
-	}
+	
 	
 	
 	
